@@ -8,11 +8,10 @@ const Features = ({ data }) => {
     )
 
     <header>
+      
       <Menu />
-    
-    </header>
 
-    try {
+      try {
         setData(api.loadData());
         const sortedData = api.loadData();
         setLast(sortedData.events.sort((evtA, evtB) =>
@@ -22,6 +21,9 @@ const Features = ({ data }) => {
         setError(err);
       }
 
+    </header>
+
+   
 }
 
 export default Features
