@@ -44,3 +44,36 @@ import { useNavigate } from "react-router-dom"
       </section>
     </main>
 
+{
+  "id": 10,
+  "petId": 198772,
+  "quantity": 7,
+  "shipDate": "2025-01-01T12:52:56.510Z",
+  "status": "approved",
+  "complete": true
+}
+
+{
+  "id": 10,
+  "username": "theUser",
+  "firstName": "John",
+  "lastName": "James",
+  "email": "john@email.com",
+  "password": "12345",
+  "phone": "12345",
+  "userStatus": 1
+}
+
+[
+  {
+    "id": 10,
+    "username": "theUser",
+    "firstName": "John",
+    "lastName": "James",
+    "email": "john@email.com",
+    "password": "12345",
+    "phone": "12345",
+    "userStatus": 1
+  }
+]
+
