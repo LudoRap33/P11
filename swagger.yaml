@@ -1,13 +1,19 @@
-swagger: '2.0'
+swagger: "2.0"
 info:
   title: Bank Argent API documentation
-  description: Contains all available API endpoints in this codebase
-  version: '1.0.0'
-  termsOfService: 'http://swagger.io/terms/'
+  description: Contains all available API endpoints in this codebase, including user management and transaction handling.
+  version: "1.0.0"
+  termsOfService: "http://swagger.io/terms/"
 host: localhost:3001
 basePath: /api/v1
 schemes:
   - http
+securityDefinitions:
+  BearerAuth:
+    type: apiKey
+    in: header
+    name: Authorization
+    description: "Bearer Token Security. Example: 'Bearer {your token here}'"
 paths:
   /user/login:
     post:
@@ -21,17 +27,17 @@ paths:
           description: Login Payload
           required: true
           schema:
-            $ref: '#/definitions/Login'
+            $ref: "#/definitions/Login"
       produces:
         - application/json
       responses:
-        '200':
+        "200":
           description: Login Successfully
           schema:
-            $ref: '#/definitions/LoginResponse'
-        '400':
+            $ref: "#/definitions/LoginResponse"
+        "400":
           description: Invalid Fields
-        '500':
+        "500":
           description: Internal Server Error
   /user/signup:
     post:
@@ -45,69 +51,185 @@ paths:
           description: Signup Payload
           required: true
           schema:
-            $ref: '#/definitions/User'
+            $ref: "#/definitions/User"
       produces:
         - application/json
       responses:
-        '200':
+        "200":
           description: Signup Successfully
           schema:
-            $ref: '#/definitions/ApiResponse'
-        '400':
+            $ref: "#/definitions/ApiResponse"
+        "400":
           description: Invalid Fields
-        '500':
+        "500":
           description: Internal Server Error
   /user/profile:
     post:
       security:
-        - Bearer: []
+        - BearerAuth: []
       tags:
         - User Module
       summary: User Profile API
       description: API for fetching a user profile
-      #produces:
-       # - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          description: Attach Bearer JWT token
+          required: true
+          type: string
+      produces:
+        - application/json
       responses:
-        '200':
-          description: User profile retrieved successully
+        "200":
+          description: User profile retrieved successfully
           schema:
-            $ref: '#/definitions/ApiResponse'
-        '400':
+            $ref: "#/definitions/ApiResponse"
+        "400":
           description: Invalid Fields
-        '500':
+        "500":
           description: Internal Server Error
     put:
       security:
-        - Bearer: []
+        - BearerAuth: []
       tags:
         - User Module
       summary: User Profile API
       description: API for updating a user profile
       parameters:
+        - in: header
+          name: Authorization
+          description: Attach Bearer JWT token
+          required: true
+          type: string
         - in: body
           name: body
           description: Update user profile attributes
           required: true
           schema:
-            $ref: '#/definitions/UserProfile'
+            $ref: "#/definitions/UserProfile"
       produces:
         - application/json
       responses:
-        '200':
-          description: User profile retrieved successully
+        "200":
+          description: User profile updated successfully
           schema:
-            $ref: '#/definitions/ApiResponse'
-        '400':
+            $ref: "#/definitions/ApiResponse"
+        "400":
           description: Invalid Fields
-        '500':
+        "500":
           description: Internal Server Error
-securityDefinitions:
-  Bearer:
-    type: apiKey
-    name: Authorization
-    in: header
+  /transactions/account/{accountId}:
+    get:
+      tags:
+        - Transactions
+      summary: Obtenir les transactions du mois en cours
+      description: Récupère toutes les transactions pour le mois en cours, en fonction du accountId en paramètre.
+      parameters:
+        - in: header
+          name: Authorization
+          description: Attach Bearer JWT token
+          required: true
+          type: string
+        - in: path
+          name: accountId
+          type: string
+          description: ID du compte requis pour filtrer les transactions par compte
+          required: true
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Liste des transactions pour le mois en cours
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Transaction"
+        "400":
+          description: Requête invalide si les paramètres de la requête sont invalides
+        "401":
+          description: Connexion requise
+        "403":
+          description: Vous n'avez pas le droit d'accéder à ces informations
+        "404":
+          description: Aucune transaction trouvée pour le compte spécifié
+        "500":
+          description: Erreur interne du serveur
+  /transactions/{transactionId}:
+    get:
+      tags:
+        - Transactions
+      summary: Obtenir les détails d'une transaction
+      description: Récupère les détails d'une transaction spécifique.
+      parameters:
+        - in: header
+          name: Authorization
+          description: Attach Bearer JWT token
+          required: true
+          type: string
+        - in: path
+          name: transactionId
+          type: string
+          required: true
+          description: ID de la transaction à récupérer
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Détails de la transaction
+          schema:
+            $ref: "#/definitions/Transaction"
+        "401":
+          description: Connexion requise
+        "403":
+          description: Vous n'avez pas le droit d'accéder à ces informations
+        "404":
+          description: Transaction non trouvée
+        "500":
+          description: Erreur interne du serveur
+
+    put:
+      tags:
+        - Transactions
+      summary: Mettre à jour une transaction
+      description: Met à jour les détails d'une transaction existante.
+      parameters:
+        - in: header
+          name: Authorization
+          description: Attach Bearer JWT token
+          required: true
+          type: string
+        - in: path
+          name: transactionId
+          type: string
+          required: true
+          description: ID de la transaction à mettre à jour
+        - in: body
+          name: body
+          description: Les détails de la transaction à mettre à jour
+          required: true
+          schema:
+            $ref: "#/definitions/MiseAJourTransaction"
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Détails de la transaction mise à jour
+          schema:
+            $ref: "#/definitions/Transaction"
+        "400":
+          description: Corps de la requête invalide
+        "401":
+          description: Connexion requise
+        "403":
+          description: Vous n'avez pas le droit d'accéder à ces informations
+        "404":
+          description: Transaction non trouvée
+        "500":
+          description: Erreur interne du serveur
+
 definitions:
   User:
+    type: object
     properties:
       email:
         type: string
@@ -121,10 +243,8 @@ definitions:
       lastName:
         type: string
         description: user last name
-      userName:
-        type: string
-        description: user public name
   Login:
+    type: object
     properties:
       email:
         type: string
@@ -154,5 +274,54 @@ definitions:
   UserProfile:
     type: object
     properties:
-      userName:
+      firstName:
         type: string
+      lastName:
+        type: string
+  Transaction:
+    type: object
+    required:
+      - id
+      - date
+      - description
+      - amount
+      - balance
+      - type
+      - category
+      - note
+    properties:
+      id:
+        type: string
+        description: "L'identifiant unique de la transaction."
+      date:
+        type: string
+        format: date
+        description: "La date à laquelle la transaction a eu lieu, au format AAAA-MM-JJ"
+      description:
+        type: string
+        description: "Description de la transaction."
+      amount:
+        type: number
+        description: "La valeur monétaire de la transaction."
+      balance:
+        type: number
+        description: "Solde du compte au moment où la transaction a eu lieu."
+      type:
+        type: string
+        description: "Indique le type de la transaction."
+      category:
+        type: string
+        description: "Catégorie de la transaction"
+      note:
+        type: string
+        description: "Note personnalisée de la transaction"
+
+  MiseAJourTransaction:
+    type: object
+    properties:
+      category:
+        type: string
+        description: "La nouvelle catégorie à assigner à la transaction."
+      note:
+        type: string
+        description: "Une note additionnelle ou un commentaire sur la transaction."
