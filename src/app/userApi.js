@@ -11,9 +11,8 @@ export const postLogin = data => {
     }).then(response => response.json())
 }
 
-export const postUser = token => {
+export const getUser = token => {
     return fetch(URL_USER, {
-        method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`

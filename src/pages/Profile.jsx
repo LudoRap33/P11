@@ -1,36 +1,36 @@
 import Account from "../components/Account"
 import { useEffect } from "react"
-import { postUser } from "../app/userApi"
+import { getUser } from "../app/userApi"
 import { selectToken, setUser } from "../app/userSlice"
 import { useSelector, useDispatch } from "react-redux"
 import Welcome from "../components/Welcome"
 import { useNavigate } from "react-router-dom"
 
+const accounts = [
+    {
+        title: 'Argent Bank Checking (x8349)',
+        amount: '$2,082.79',
+        amountDescription: 'Available Balance',
+        viewTransactions: '#',
+    },
+    {
+        title: 'Argent Bank Savings (x6712)',
+        amount: '$10,928.42',
+        amountDescription: 'Available Balance',
+        viewTransactions: '#',
+    },
+    {
+        title: 'Argent Bank Credit Card (x8349)',
+        amount: '$184.30',
+        amountDescription: 'Current Balance',
+        viewTransactions: '#',
+    }
+]
+
 const Profile = () => {
     const dispatch = useDispatch()
     const token = useSelector(selectToken)
     const navigate = useNavigate()
-
-    const accounts = [
-        {
-            title: 'Argent Bank Checking (x8349)',
-            amount: '$2,082.79',
-            amountDescription: 'Available Balance',
-            viewTransactions: '#',
-        },
-        {
-            title: 'Argent Bank Savings (x6712)',
-            amount: '$10,928.42',
-            amountDescription: 'Available Balance',
-            viewTransactions: '#',
-        },
-        {
-            title: 'Argent Bank Credit Card (x8349)',
-            amount: '$184.30',
-            amountDescription: 'Current Balance',
-            viewTransactions: '#',
-        }
-    ]
 
     useEffect(() => {
 
@@ -38,7 +38,7 @@ const Profile = () => {
             navigate('/sign-in')
         }
 
-        postUser(token).then(data => dispatch(setUser(data.body)))
+        getUser(token).then(data => dispatch(setUser(data.body)))
     }, [dispatch, navigate, token])
 
     return (
